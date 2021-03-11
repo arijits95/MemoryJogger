@@ -19,12 +19,12 @@ const loginHandler = async (req, res) => {
 const authorizationHandler = async (req, res, next) => {
     console.log(req.headers['authorization']);
     const user = await AuthService.validateToken(req.headers.authorization);
-    console.log(user._id);
     if (user == null) {
         res
         .status(401)
         .json({'message':'Unauthorized'});
     } else {
+        console.log(user._id);
         req.userId = user._id.toString();
         next();
     }

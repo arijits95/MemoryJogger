@@ -54,7 +54,11 @@ const login = async (email, password) => {
 };
 
 const validateToken = async (token) => {
-    return await getUserForJwtToken(token);
+    try {
+        return await getUserForJwtToken(token);
+    } catch (error) {
+        return null;
+    }
 };
 
 const getJwtToken = (email) => {

@@ -47,8 +47,7 @@ const createMemoryItem = async (memoryItem) => {
     return await MemoryCollection.insertOne(memoryItem);
 };
 
-const getMemoryItemsByCategory = async (userId, categoryName) => {
-    console.log('UserId: %s\nCategory Name: %s', userId, categoryName);
+const getMemoryItemsForCategory = async (userId, categoryName) => {
     return await MemoryCollection.find({ 'userId': userId, 'categoryName': categoryName }).toArray();
 };
 
@@ -76,7 +75,7 @@ const getAllMemoryItemsGroupedByCategory = async (userId) => {
 module.exports = {
     createSchema,
     createMemoryItem,
-    getMemoryItemsByCategory,
+    getMemoryItemsForCategory,
     getAllMemoryItemsGroupedByCategory
 };
 

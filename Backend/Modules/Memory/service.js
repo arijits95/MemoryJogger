@@ -24,7 +24,19 @@ const getMemoryItems = async (userId) => {
     }
 };
 
+const getMemoryItemsForCategory = async (userId, categoryName) => {
+    try {
+        console.log(userId);
+        const memoryItems = await MemoryItemDB.getMemoryItemsForCategory(userId, categoryName);
+        return { memoryItems };
+    } catch (e) {
+        console.log('Error :', e);
+        return { error: e };
+    }
+};
+
 module.exports = { 
     addMemoryItem,
-    getMemoryItems
+    getMemoryItems,
+    getMemoryItemsForCategory
 };
