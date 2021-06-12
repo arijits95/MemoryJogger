@@ -12,9 +12,11 @@ const getMemoryItems = async (req, res) => {
     console.log('Get all Memory Items controller called');
     console.log(util.inspect(req.query, {showHidden: false, depth: null}))
     if (req.query.categoryName) {
+        console.log('Fetching memory items of category : ' + req.query.categoryName);
         const { error, memoryItems } = await MemoryItemService.getMemoryItemsForCategory(req.userId, req.query.categoryName);
         res.send(server_response(error == null, memoryItems, error ?? null));
     } else {
+        console.log('Fetching all memory items');
         const { error, memoryItems } = await MemoryItemService.getMemoryItems(req.userId);
         res.send(server_response(error == null, memoryItems, error ?? null));
     }  

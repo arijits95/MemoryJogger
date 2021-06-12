@@ -16,7 +16,8 @@ const AppErrors = {
     InvalidUserRegistrationObject: () => new AppError(100, 'Invalid user object'),
     InvalidUserLoginObject: () => new AppError(101, 'Invalid user object'),
     UserNotFound: () => new AppError(102, 'User does not exists'), 
-    InvalidLoginCredentials: () => new AppError(103, 'Invalid login credentials')
+    UserAlreadyExists: () => new AppError(103, 'User already exists'), 
+    InvalidLoginCredentials: () => new AppError(104, 'Invalid login credentials')
 };
 
 module.exports = { AppError, AppErrors };

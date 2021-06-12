@@ -3,19 +3,31 @@ const AuthDB = require('./db');
 const { AppError, AppErrors } = require('../../Helpers/error');
 const JWT = require('jsonwebtoken');
 const { PRIVATE_KEY } = require('../../config');
+const Bcrypt = require('bcrypt');
 
 const register = async (user) => {
     try {
         const isValid = AuthValidator.validateUserRegistrationObject(user);
         console.log(`Registration user object valid : ${isValid}`);
         if (!isValid) {
-            throw new AppErrors.InvalidUserRegistrationObject();
+            throw AppErrors.InvalidUserRegistrationObject();
         } else {
-            const userObj = await AuthDB.createUser(user);
-            const token = getJwtToken();
-            console.log(`User Obj DB : ${userObj}`);
-            return { user: userObj, 
-                    token: token };
+            const userExists = await AuthDB.getUserByEmail(user.email);
+            console.log(userExists);
+            if (userExists) {
+                throw AppErrors.UserAlreadyExists();
+            } else {
+                const passwordHash = await getHashForPassword(user.password);
+                const result = await AuthDB.createUser({ 
+                    name: user.name,
+                    email: user.email,  
+                    password: passwordHash
+                });
+                const token = getJwtToken();
+                console.log(`User Obj DB : ${newUser}`);
+                return { user: result.ops[0],
+                        token: token };
+            }
         }
     } catch (e) {
         console.log('Error :', e.json());
@@ -37,7 +49,8 @@ const login = async (email, password) => {
                 console.log('User Not Found');
                 throw AppErrors.UserNotFound();
             } else {
-                if (userObj.password == password) {
+                const doesPasswordMatch = await passwordMatches(password, userObj.password);
+                if (doesPasswordMatch) {
                     const token = getJwtToken(email);
                     return { user: userObj, 
                             token: token };
@@ -48,7 +61,7 @@ const login = async (email, password) => {
             }
         }
     } catch (e) {
-        console.log('Error :', e);
+        console.log('Error :', e.json());
         return { error: e };
     }
 };
@@ -72,6 +85,19 @@ const getUserForJwtToken = async (token) => {
     console.log('Decoded Token: ', decodedToken.email);
     return await AuthDB.getUserByEmail(decodedToken.email);
 };
+
+const getHashForPassword = async (password) => {
+    const hash = await Bcrypt.hash(password, 10);
+    console.log('Password : ' + password + ' Hash : ' + hash);
+    return hash;
+};
+
+const passwordMatches = async (password, hash) => {
+    const matches = await Bcrypt.compare(password, hash);
+    const chash = await getHashForPassword(password);
+    console.log('Password : ' + password + 'Hash : ' +  + ' Hash from DB: ' + hash);
+    return matches;
+}
 
 module.exports = { 
     register,
