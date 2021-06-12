@@ -2,7 +2,7 @@ const server_response = (success, data, error) => {
     return {
         success,
         data,
-        error: error//.json()
+        error: error == null ? null : error.json()
     }
 };
 
